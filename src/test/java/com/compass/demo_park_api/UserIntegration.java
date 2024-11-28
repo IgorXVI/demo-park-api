@@ -1,6 +1,7 @@
 package com.compass.demo_park_api;
 
 import com.compass.demo_park_api.dtos.UserCreateDTO;
+import com.compass.demo_park_api.dtos.UserPasswordDTO;
 import com.compass.demo_park_api.dtos.UserResponseDTO;
 import com.compass.demo_park_api.errors.ErrorMessage;
 import org.assertj.core.api.Assertions;
@@ -186,5 +187,73 @@ public class UserIntegration {
         Assertions.assertThat(res.get(0).getUsername()).isEqualTo("ana@email.com");
         Assertions.assertThat(res.get(1).getUsername()).isEqualTo("bia@email.com");
         Assertions.assertThat(res.get(2).getUsername()).isEqualTo("bob@email.com");
+    }
+
+    @Test
+    public void updatePassword_WithValidData_ReturnStatus204() {
+        testClient
+                .patch()
+                .uri("/api/v1/user/100")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserPasswordDTO("123456", "banana", "banana"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(Void.class)
+                .returnResult().getResponseBody();
+    }
+
+    @Test
+    public void updatePassword_WithInvalidData_ReturnStatus204() {
+        ErrorMessage res = testClient
+                .patch()
+                .uri("/api/v1/user/666")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserPasswordDTO("123456", "banana", "banana"))
+                .exchange()
+                .expectStatus().isEqualTo(404)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        Assertions.assertThat(res).isNotNull();
+        Assertions.assertThat(res.getStatus()).isEqualTo(404);
+
+        res = testClient
+                .patch()
+                .uri("/api/v1/user/100")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserPasswordDTO("123456", "banana", "banana2"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        Assertions.assertThat(res).isNotNull();
+        Assertions.assertThat(res.getStatus()).isEqualTo(422);
+
+        res = testClient
+                .patch()
+                .uri("/api/v1/user/100")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserPasswordDTO("123456", "banan1", "banan2"))
+                .exchange()
+                .expectStatus().isEqualTo(400)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        Assertions.assertThat(res).isNotNull();
+        Assertions.assertThat(res.getStatus()).isEqualTo(400);
+
+        res = testClient
+                .patch()
+                .uri("/api/v1/user/100")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserPasswordDTO("123457", "banana", "banana"))
+                .exchange()
+                .expectStatus().isEqualTo(400)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        Assertions.assertThat(res).isNotNull();
+        Assertions.assertThat(res.getStatus()).isEqualTo(400);
     }
 }
