@@ -3,6 +3,7 @@ package com.compass.demo_park_api.errors;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
@@ -12,17 +13,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Getter
+@NoArgsConstructor
 @ToString
 public class ErrorMessage {
-    private final String message;
+    private String message;
 
-    private final String method;
+    private String method;
 
-    private final String path;
+    private String path;
 
-    private final int status;
+    private int status;
 
-    private final String statusText;
+    private String statusText;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Map<String, String> errors;
