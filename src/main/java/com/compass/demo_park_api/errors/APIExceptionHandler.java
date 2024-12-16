@@ -100,4 +100,21 @@ public class APIExceptionHandler {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(errorMessage);
     }
+
+    @ExceptionHandler(LoginError.class)
+    public ResponseEntity<ErrorMessage> loginException(
+            RuntimeException ex,
+            HttpServletRequest request
+    ) {
+        ErrorMessage errorMessage = new ErrorMessage(
+                request,
+                HttpStatus.BAD_REQUEST,
+                ex.getMessage()
+        );
+        log.error("API ERROR: ", ex);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorMessage);
+    }
 }

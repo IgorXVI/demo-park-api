@@ -54,4 +54,12 @@ public class UserService {
     public List<User> findAll() {
         return userRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
     }
+
+    public User getByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(NotFoundError::new);
+    }
+
+    public User.Role getRoleByUsername(String username) {
+        return userRepository.findRoleByUsername(username);
+    }
 }
